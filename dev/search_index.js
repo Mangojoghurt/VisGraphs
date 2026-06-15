@@ -1,3 +1,3 @@
 var documenterSearchIndex = {"docs":
-[{"category":"section","location":"#VisGraphs","page":"Home","text":"Documentation for VisGraphs.\n\n","title":"VisGraphs"}]
+[{"category":"section","location":"#VisGraphs","page":"Home","text":"Documentation for VisGraphs.\n\n","title":"VisGraphs"},{"category":"method","location":"#VisGraphs.hvg-Tuple{AbstractVector}","page":"Home","text":"hvg(x)\n\nConstruct a Horizontal Visibility Graph (HVG) from a time series x.\n\nReturns:     edges::Vector{Tuple{Int, Int}}\n\n\n\n\n\n","title":"VisGraphs.hvg"},{"category":"method","location":"#VisGraphs.nvg-Tuple{AbstractVector}","page":"Home","text":"nvg(x)\n\nConstruct a Natural Visibility Graph (NVG) from a time series x.\n\nReturns:     edges::Vector{Tuple{Int, Int}}\n\n\n\n\n\n","title":"VisGraphs.nvg"}]
 }
