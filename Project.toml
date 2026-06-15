@@ -1,0 +1,7 @@
+name = "VisGraphs"
+uuid = "c61117fa-d726-4646-af37-6046d989f4f7"
+authors = ["Jan Wohltmann <jan.wohltmann@campus.tu-berlin.de>"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.11"
