@@ -7,7 +7,7 @@ Construct a Natural Visibility Graph (NVG)
 from a time series x.
 
 Returns:
-    edges::Vector{Tuple{Int, Int}}
+    Vector{Tuple{Int, Int}}: edges of the NVG.
 """
 function nvg(x::AbstractVector)
 

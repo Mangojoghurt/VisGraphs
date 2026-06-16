@@ -7,7 +7,7 @@ Construct a Horizontal Visibility Graph (HVG)
 from a time series x.
 
 Returns:
-    edges::Vector{Tuple{Int, Int}}
+    Vector{Tuple{Int, Int}}: edges of the HVG.
 """
 function hvg(x::AbstractVector)
 
