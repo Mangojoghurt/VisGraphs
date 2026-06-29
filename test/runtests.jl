@@ -1,6 +1,5 @@
 using VisGraphs
 using Test
-using LinearAlgebra
 
 @testset "Signal generators" begin
 
@@ -329,7 +328,10 @@ end
         edges = f(x)
         n = length(x)
         A = adjacency_matrix(edges, n)
-        D = diagm([sum(A[i, :]) for i in 1:n])
+        D = zeros(Int, n, n)
+        for i in 1:n
+            D[i, i] = sum(A[i, :])
+        end
         L = laplacian_matrix(edges, n)
         @test L == D - A
     end
@@ -343,6 +345,10 @@ end
     @test L_weighted == L_unweighted
 end
 
+@testset "laplacian_matrix — input validation" begin
+
+    @test_throws ArgumentError laplacian_matrix([], 0)
+end
 @testset "laplacian_matrix — input validation" begin
 
     @test_throws ArgumentError laplacian_matrix([], 0)
