@@ -133,3 +133,223 @@ end
     # ensure correct type
     @test typeof(plt1) == typeof(plt2)
 end
+@testset "Weighted graphs return correct type" begin
+
+    x = [1.0, 2.0, 5.0]
+
+    wh = whvg(x)
+    wn = wnvg(x)
+
+    @test eltype(wh) == Tuple{Int,Int,Float64}
+    @test eltype(wn) == Tuple{Int,Int,Float64}
+end
+
+@testset "Weighted graphs have same edges as unweighted" begin
+
+    x = generate_sine(20)
+
+    # strip weights and compare edge sets to unweighted versions
+    @test [(i,j) for (i,j,_) in whvg(x)] == hvg(x)
+    @test [(i,j) for (i,j,_) in wnvg(x)] == nvg(x)
+end
+
+@testset "Weighted graph weights are finite" begin
+
+    x = generate_noisy_sine(30)
+
+    for (_,_,w) in whvg(x)
+        @test isfinite(w)
+    end
+
+    for (_,_,w) in wnvg(x)
+        @test isfinite(w)
+    end
+end
+
+@testset "Weight formula is correct" begin
+
+    # for two points (1, x1) and (2, x2) the angle is atan(x2-x1, 1)
+    x = [0.0, 1.0]
+
+    wh = whvg(x)
+    wn = wnvg(x)
+
+    @test length(wh) == 1
+    @test length(wn) == 1
+
+    expected_weight = atan(1.0, 1.0)  # π/4
+
+    @test wh[1][3] ≈ expected_weight
+    @test wn[1][3] ≈ expected_weight
+end
+
+@testset "Weighted graph input validation" begin
+
+    @test_throws ArgumentError whvg([1.0])
+    @test_throws ArgumentError wnvg([1.0])
+
+    @test_throws ArgumentError whvg([1.0, Inf])
+    @test_throws ArgumentError wnvg([NaN, 1.0])
+end
+
+@testset "Weighted plot functions" begin
+
+    x = [1.0, 2.0, 1.5, 3.0]
+
+    plt1 = plot_whvg(x)
+    plt2 = plot_wnvg(x)
+
+    @test plt1 !== nothing
+    @test plt2 !== nothing
+    @test typeof(plt1) == typeof(plt2)
+end
+
+# ── Issue #20: analysis tools for graph metrics ────────────────────────────
+
+@testset "adjacency_matrix — basic structure" begin
+
+    x = [1.0, 2.0, 5.0]
+    edges = nvg(x)
+    A = adjacency_matrix(edges, length(x))
+
+    @test size(A) == (3, 3)
+    @test all(A[i, i] == 0 for i in 1:3)
+    @test A == A'
+    @test A[1, 2] == 1
+    @test A[2, 3] == 1
+    @test A[1, 3] == 1
+    @test all(v in (0, 1) for v in A)
+end
+
+@testset "adjacency_matrix — HVG known example" begin
+
+    x = [1.0, 2.0, 5.0]
+    edges = hvg(x)
+    A = adjacency_matrix(edges, length(x))
+
+    @test A[1, 2] == 1
+    @test A[2, 3] == 1
+    @test A[1, 3] == 0
+end
+
+@testset "adjacency_matrix — works with weighted edges" begin
+
+    x = [1.0, 2.0, 5.0]
+    A = adjacency_matrix(wnvg(x), length(x))
+    A_ref = adjacency_matrix(nvg(x), length(x))
+    @test A == A_ref
+end
+
+@testset "adjacency_matrix — input validation" begin
+
+    @test_throws ArgumentError adjacency_matrix([], 0)
+    @test_throws ArgumentError adjacency_matrix([(1, 5)], 3)
+end
+
+@testset "degree_distribution — basic correctness" begin
+
+    x = [1.0, 2.0, 5.0]
+
+    edges = nvg(x)
+    degrees, dist = degree_distribution(edges, length(x))
+
+    @test length(degrees) == 3
+    @test all(d == 2 for d in degrees)
+    @test haskey(dist, 2)
+    @test dist[2] ≈ 1.0
+
+    edges_h = hvg(x)
+    degrees_h, dist_h = degree_distribution(edges_h, length(x))
+
+    @test degrees_h[1] == 1
+    @test degrees_h[2] == 2
+    @test degrees_h[3] == 1
+    @test dist_h[1] ≈ 2/3
+    @test dist_h[2] ≈ 1/3
+end
+
+@testset "degree_distribution — distribution sums to 1" begin
+
+    x = generate_sine(30)
+
+    for f in [hvg, nvg]
+        edges = f(x)
+        _, dist = degree_distribution(edges, length(x))
+        @test sum(values(dist)) ≈ 1.0 atol=1e-12
+    end
+end
+
+@testset "degree_distribution — degrees match adjacency matrix row sums" begin
+
+    x = generate_noisy_sine(20)
+
+    for f in [hvg, nvg]
+        edges = f(x)
+        n = length(x)
+        degrees, _ = degree_distribution(edges, n)
+        A = adjacency_matrix(edges, n)
+        row_sums = [sum(A[i, :]) for i in 1:n]
+        @test degrees == row_sums
+    end
+end
+
+@testset "degree_distribution — input validation" begin
+
+    @test_throws ArgumentError degree_distribution([], 0)
+    @test_throws ArgumentError degree_distribution([(1, 5)], 3)
+end
+
+@testset "laplacian_matrix — basic properties" begin
+
+    x = [1.0, 2.0, 5.0]
+    edges = nvg(x)
+    n = length(x)
+    L = laplacian_matrix(edges, n)
+
+    @test size(L) == (n, n)
+    @test L == L'
+    @test all(sum(L[i, :]) == 0 for i in 1:n)
+
+    degrees, _ = degree_distribution(edges, n)
+    @test all(L[i, i] == degrees[i] for i in 1:n)
+
+    for i in 1:n, j in 1:n
+        if i != j
+            @test L[i, j] in (-1, 0)
+        end
+    end
+end
+
+@testset "laplacian_matrix — L = D - A" begin
+
+    x = generate_sine(15)
+
+    for f in [hvg, nvg]
+        edges = f(x)
+        n = length(x)
+        A = adjacency_matrix(edges, n)
+        D = zeros(Int, n, n)
+        for i in 1:n
+            D[i, i] = sum(A[i, :])
+        end
+        L = laplacian_matrix(edges, n)
+        @test L == D - A
+    end
+end
+
+@testset "laplacian_matrix — works with weighted edges" begin
+
+    x = [1.0, 2.0, 5.0]
+    L_weighted = laplacian_matrix(wnvg(x), length(x))
+    L_unweighted = laplacian_matrix(nvg(x), length(x))
+    @test L_weighted == L_unweighted
+end
+
+@testset "laplacian_matrix — input validation" begin
+
+    @test_throws ArgumentError laplacian_matrix([], 0)
+end
+@testset "laplacian_matrix — input validation" begin
+
+    @test_throws ArgumentError laplacian_matrix([], 0)
+end
