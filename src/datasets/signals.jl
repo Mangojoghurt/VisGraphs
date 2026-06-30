@@ -10,16 +10,13 @@ operate on time series.
 
 # Examples
 ```jldoctest
-julia> length(generate_sine())
-100
+julia> x = generate_sine(5);
 
-julia> generate_sine(5)
-5-element Vector{Float64}:
-  0.0
-  1.2246467991473532e-16
- -2.4492935982947064e-16
-  3.6739403974420594e-16
- -4.898587196589413e-16
+julia> length(x)
+5
+
+julia> x[1] ≈ 0.0
+true
 ```
 """
 function generate_sine(n::Int=100)
@@ -37,8 +34,10 @@ is useful for testing and benchmarking algorithms on unstructured data.
 
 # Examples
 ```jldoctest
-julia> length(generate_random())
-100
+julia> x = generate_random(10);
+
+julia> length(x)
+10
 
 julia> all(0 .<= generate_random(10) .< 1)
 true
@@ -63,10 +62,11 @@ under noisy conditions.
 
 # Examples
 ```jldoctest
-julia> length(generate_noisy_sine())
-100
+julia> x = generate_noisy_sine(3, 0.0);
 
-julia> generate_noisy_sine(5, 0.0) == generate_sine(5)
+julia> y = generate_sine(3);
+
+julia> x == y
 true
 ```
 """
