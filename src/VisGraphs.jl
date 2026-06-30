@@ -1,6 +1,6 @@
 module VisGraphs
 
-using Plots : plot, plot!
+using Plots
 using Plots.Colors: RGB
 
 include("utils/validation.jl")
