@@ -127,8 +127,8 @@ end
     plt2 = plot_nvg(x)
 
     # ensure plot objects are returned
-    @test plt1 !== nothing
-    @test plt2 !== nothing
+    @test plt1 !== nothing 
+    @test plt2 !== nothing 
 
     # ensure correct type
     @test typeof(plt1) == typeof(plt2)
@@ -203,8 +203,6 @@ end
     @test plt2 !== nothing
     @test typeof(plt1) == typeof(plt2)
 end
-
-# ── Issue #20: analysis tools for graph metrics ────────────────────────────
 
 @testset "adjacency_matrix — basic structure" begin
 

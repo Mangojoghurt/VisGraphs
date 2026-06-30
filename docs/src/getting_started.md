@@ -22,7 +22,7 @@ Pkg.add("VisGraphs")
 
 Then load the package:
 
-```julia
+```@example main
 using VisGraphs
 ```
 
@@ -32,7 +32,7 @@ using VisGraphs
 
 We start by generating a simple noisy oscillatory signal using the built-in utility function from **VisGraphs.jl**.
 
-```julia
+```@example main
 x = generate_noisy_sine(50, 0.1)
 ```
 
@@ -46,13 +46,13 @@ The **Horizontal Visibility Graph (HVG)** connects points that can “see” eac
 
 ### Construct the HVG
 
-```julia
+```@example main
 edges_hvg = hvg(x)
 ```
 
 ### Plot the HVG
 
-```julia
+```@example main
 plot_hvg(x)
 ```
 
@@ -64,13 +64,13 @@ The **Natural Visibility Graph (NVG)** uses a geometric criterion based on strai
 
 ### Construct the NVG
 
-```julia
+```@example main
 edges_nvg = nvg(x)
 ```
 
 ### Plot the NVG
 
-```julia
+```@example main
 plot_nvg(x)
 ```
 
@@ -80,9 +80,14 @@ plot_nvg(x)
 
 Weighted variants encode additional geometric information (e.g., distances or slopes) on each edge.
 
-```julia
+```@example main
 edges_whvg = whvg(x)
 edges_wnvg = wnvg(x)
+```
+
+```@example main
+plot_whvg(x)
+plot_wnvg(x)
 ```
 
 ---
@@ -93,19 +98,19 @@ Once constructed, visibility graphs can be analyzed using standard graph-theoret
 
 ### Adjacency Matrix
 
-```julia
+```@example main
 A = adjacency_matrix(edges_hvg, length(x))
 ```
 
 ### Degree Distribution
 
-```julia
+```@example main
 degrees, dist = degree_distribution(edges_hvg, length(x))
 ```
 
 ### Laplacian Matrix
 
-```julia
+```@example main
 L = laplacian_matrix(edges_hvg, length(x))
 ```
 
@@ -115,7 +120,7 @@ L = laplacian_matrix(edges_hvg, length(x))
 
 It is often useful to compare the structural differences between HVG and NVG representations.
 
-```julia
+```@example main
 plot_hvg(x)
 plot_nvg(x)
 ```

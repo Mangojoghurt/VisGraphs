@@ -11,8 +11,15 @@ the horizontal visibility condition:
 The resulting graph encodes the structure of visibility relationships
 in the time series.
 
+Assumptions:
+- samples are indexed on an evenly spaced time grid (t = 1, 2, ..., n)
+- the index position is used as the time coordinate
+
+For irregularly sampled data, users must resample or provide explicit
+timestamps (not currently supported).
+
 The implementation uses a divide-and-conquer algorithm with average
-O(N log N) complexity.
+O(N log N) complexity, based on the approach used in the Python package `ts2vg`.
 
 Returns a sorted edge list `(i, j)` with `i < j`.
 """
@@ -37,6 +44,13 @@ angle of visibility between two connected points:
 
 The weight encodes both amplitude difference and temporal separation.
 
+Assumptions:
+- samples are indexed on an evenly spaced time grid (t = 1, 2, ..., n)
+- the index position is used as the time coordinate
+
+For irregularly sampled data, users must resample or provide explicit
+timestamps (not currently supported).
+
 Returns a vector of weighted edges `(i, j, w)`.
 """
 function whvg(x::AbstractVector{<:Real})
@@ -60,6 +74,13 @@ Plot a time series together with its Horizontal Visibility Graph (HVG).
 The time series is shown as a line plot, while edges are drawn as
 semi-transparent connections between visible nodes.
 
+Assumptions:
+- samples are indexed on an evenly spaced time grid (t = 1, 2, ..., n)
+- the index position is used as the time coordinate
+
+For irregularly sampled data, users must resample or provide explicit
+timestamps (not currently supported).
+
 Returns a `Plots.Plot` object.
 """
 function plot_hvg(x::AbstractVector{<:Real})
@@ -78,6 +99,13 @@ Plot a time series together with its Weighted Horizontal Visibility Graph (WHVG)
 
 Edges are colored according to their angular weight, normalized across
 all edges.
+
+Assumptions:
+- samples are indexed on an evenly spaced time grid (t = 1, 2, ..., n)
+- the index position is used as the time coordinate
+
+For irregularly sampled data, users must resample or provide explicit
+timestamps (not currently supported).
 
 Returns a `Plots.Plot` object.
 """

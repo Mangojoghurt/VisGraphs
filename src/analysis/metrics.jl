@@ -1,7 +1,5 @@
-export degree_distribution, adjacency_matrix, laplacian_matrix
-
 """
-    adjacency_matrix(edges, n::Int)
+    adjacency_matrix(edges, n::Integer)
 
 Construct an n×n adjacency matrix from an edge list.
 
@@ -19,7 +17,7 @@ edges = nvg(x)
 A = adjacency_matrix(edges, length(x))
 ```
 """
-function adjacency_matrix(edges, n::Int)
+function adjacency_matrix(edges, n::Integer)
 
     n ≥ 1 || throw(ArgumentError("`n` must be at least 1."))
 
@@ -37,7 +35,7 @@ function adjacency_matrix(edges, n::Int)
 end
 
 """
-    degree_distribution(edges, n::Int)
+    degree_distribution(edges, n::Integer)
 
 Compute the degree sequence and degree distribution of a graph.
 
@@ -61,7 +59,7 @@ maximum(degrees)
 sort(collect(dist))
 ```
 """
-function degree_distribution(edges, n::Int)
+function degree_distribution(edges, n::Integer)
 
     n ≥ 1 || throw(ArgumentError("`n` must be at least 1."))
 
@@ -85,7 +83,7 @@ function degree_distribution(edges, n::Int)
 end
 
 """
-    laplacian_matrix(edges, n::Int)
+    laplacian_matrix(edges, n::Integer)
 
 Construct the combinatorial graph Laplacian `L = D - A`.
 
@@ -108,7 +106,7 @@ using LinearAlgebra
 eigvals(Symmetric(float.(L)))
 ```
 """
-function laplacian_matrix(edges, n::Int)
+function laplacian_matrix(edges, n::Integer)
 
     n ≥ 1 || throw(ArgumentError("`n` must be at least 1."))
 
