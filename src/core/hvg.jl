@@ -1,92 +1,20 @@
-# ── Shared Helper ─────────────────────────────────────────────────────────────
-
-"""
-    _argmax_range(x, left, right)
-
-Return the index of the maximum value in `x[left:right]`.
-Ties are broken in favor of the leftmost index.
-"""
-@inline function _argmax_range(x::AbstractVector{<:Real}, left::Int, right::Int)
-    idx  = left
-    best = @inbounds x[left]
-    @inbounds for k in left+1:right
-        xk = x[k]
-        if xk > best
-            best = xk
-            idx  = k
-        end
-    end
-    return idx
-end
-
-# ── Input Validation ──────────────────────────────────────────────────────────
-
-function _validate(x::AbstractVector{<:Real})
-    length(x) ≥ 2 || throw(ArgumentError("`x` must contain at least two values."))
-    all(isfinite, x) || throw(ArgumentError("`x` must contain only finite values."))
-end
-
-# ── HVG Divide-and-Conquer (Stack-Based) ──────────────────────────────────────
-
-function _hvg_core!(
-    edges::Vector{Tuple{Int,Int}},
-    x::AbstractVector{<:Real},
-    left::Int,
-    right::Int,
-)
-    # Using a stack prevents StackOverflowError on massive time series
-    stack = [(left, right)]
-
-    while !isempty(stack)
-        l, r = pop!(stack)
-        r - l < 1 && continue
-
-        # The subarray maximum x[mid] is always visible to other nodes in the range
-        mid = _argmax_range(x, l, r)
-
-        # ── Scan LEFT: connect mid to visible nodes in [l, mid-1] ────────────
-        max_seen = typemin(eltype(x))
-        @inbounds for i in mid-1:-1:l
-            xi = x[i]
-            if max_seen < xi
-                push!(edges, (i, mid))
-            end
-            max_seen = max(max_seen, xi) # Update always, no early break
-        end
-
-        # ── Scan RIGHT: connect mid to visible nodes in [mid+1, r] ───────────
-        max_seen = typemin(eltype(x))
-        @inbounds for j in mid+1:r
-            xj = x[j]
-            if max_seen < xj
-                push!(edges, (mid, j))
-            end
-            max_seen = max(max_seen, xj) # Update always, no early break
-        end
-
-        # ── Recurse on independent sub-problems ───────────────────────────────
-        if l < mid - 1
-            push!(stack, (l, mid - 1))
-        end
-        if mid + 1 < r
-            push!(stack, (mid + 1, r))
-        end
-    end
-end
-
-# ── Public API ────────────────────────────────────────────────────────────────
-
 """
     hvg(x)
 
 Construct a Horizontal Visibility Graph (HVG) from a time series `x`.
-Uses a divide-and-conquer algorithm achieving O(N log N) average runtime.
 
-Arguments:
-    x::AbstractVector{<:Real}: time series containing finite numeric values.
+Two nodes `i < j` are connected if all intermediate values satisfy
+the horizontal visibility condition:
 
-Returns:
-    Vector{Tuple{Int, Int}}: edges of the HVG.
+    x[k] < min(x[i], x[j])  for all i < k < j
+
+The resulting graph encodes the structure of visibility relationships
+in the time series.
+
+The implementation uses a divide-and-conquer algorithm with average
+O(N log N) complexity.
+
+Returns a sorted edge list `(i, j)` with `i < j`.
 """
 function hvg(x::AbstractVector{<:Real})
     _validate(x)
@@ -101,7 +29,15 @@ end
     whvg(x)
 
 Construct a Weighted Horizontal Visibility Graph (WHVG) from a time series `x`.
-Each edge carries a weight equal to the angle (in radians) of the line of sight.
+
+Extends the HVG by assigning each edge a geometric weight equal to the
+angle of visibility between two connected points:
+
+    w(i, j) = atan(x[j] - x[i], j - i)
+
+The weight encodes both amplitude difference and temporal separation.
+
+Returns a vector of weighted edges `(i, j, w)`.
 """
 function whvg(x::AbstractVector{<:Real})
     base  = hvg(x)
@@ -116,8 +52,16 @@ function whvg(x::AbstractVector{<:Real})
     return edges
 end
 
-# ── Plotting ──────────────────────────────────────────────────────────────────
+"""
+    plot_hvg(x)
 
+Plot a time series together with its Horizontal Visibility Graph (HVG).
+
+The time series is shown as a line plot, while edges are drawn as
+semi-transparent connections between visible nodes.
+
+Returns a `Plots.Plot` object.
+"""
 function plot_hvg(x::AbstractVector{<:Real})
     edges = hvg(x)
     plt = plot(1:length(x), x, lw=2, label="time series", xlabel="t", ylabel="x(t)", title="Horizontal Visibility Graph")
@@ -127,6 +71,16 @@ function plot_hvg(x::AbstractVector{<:Real})
     return plt
 end
 
+"""
+    plot_whvg(x)
+
+Plot a time series together with its Weighted Horizontal Visibility Graph (WHVG).
+
+Edges are colored according to their angular weight, normalized across
+all edges.
+
+Returns a `Plots.Plot` object.
+"""
 function plot_whvg(x::AbstractVector{<:Real})
     edges = whvg(x)
     weights = [w for (_, _, w) in edges]

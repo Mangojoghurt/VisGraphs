@@ -3,6 +3,8 @@ module VisGraphs
 using Plots
 using Plots.Colors: RGB
 
+include("utils/validation.jl")
+include("core/internal.jl")
 include("core/hvg.jl")
 include("core/nvg.jl")
 include("datasets/signals.jl")

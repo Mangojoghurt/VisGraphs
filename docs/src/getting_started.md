@@ -1,0 +1,132 @@
+# Getting Started
+
+This guide introduces the basic workflow of **VisGraphs.jl** for constructing and analyzing visibility graphs from time series data.
+
+We cover:
+
+* Horizontal Visibility Graph (HVG)
+* Natural Visibility Graph (NVG)
+* Weighted variants
+* Basic graph analysis tools
+
+---
+
+## Installation
+
+If you haven’t installed **VisGraphs.jl** yet:
+
+```julia
+using Pkg
+Pkg.add("VisGraphs")
+```
+
+Then load the package:
+
+```julia
+using VisGraphs
+```
+
+---
+
+## Example Time Series
+
+We start by generating a simple noisy oscillatory signal using the built-in utility function from **VisGraphs.jl**.
+
+```julia
+x = generate_noisy_sine(50, 0.1)
+```
+
+This produces a sine wave with additive Gaussian noise, which is useful for demonstrating visibility graph constructions on realistic, non-smooth signals.
+
+---
+
+## Horizontal Visibility Graph (HVG)
+
+The **Horizontal Visibility Graph (HVG)** connects points that can “see” each other using a horizontal line-of-sight criterion.
+
+### Construct the HVG
+
+```julia
+edges_hvg = hvg(x)
+```
+
+### Plot the HVG
+
+```julia
+plot_hvg(x)
+```
+
+---
+
+## Natural Visibility Graph (NVG)
+
+The **Natural Visibility Graph (NVG)** uses a geometric criterion based on straight-line visibility between points.
+
+### Construct the NVG
+
+```julia
+edges_nvg = nvg(x)
+```
+
+### Plot the NVG
+
+```julia
+plot_nvg(x)
+```
+
+---
+
+## Weighted Visibility Graphs
+
+Weighted variants encode additional geometric information (e.g., distances or slopes) on each edge.
+
+```julia
+edges_whvg = whvg(x)
+edges_wnvg = wnvg(x)
+```
+
+---
+
+## Graph Analysis
+
+Once constructed, visibility graphs can be analyzed using standard graph-theoretic tools.
+
+### Adjacency Matrix
+
+```julia
+A = adjacency_matrix(edges_hvg, length(x))
+```
+
+### Degree Distribution
+
+```julia
+degrees, dist = degree_distribution(edges_hvg, length(x))
+```
+
+### Laplacian Matrix
+
+```julia
+L = laplacian_matrix(edges_hvg, length(x))
+```
+
+---
+
+## Comparing HVG and NVG
+
+It is often useful to compare the structural differences between HVG and NVG representations.
+
+```julia
+plot_hvg(x)
+plot_nvg(x)
+```
+
+---
+
+## Next Steps
+
+You can now:
+
+* Try different time series (chaotic, financial, periodic)
+* Compare HVG vs NVG structures
+* Explore spectral properties via the Laplacian
+* Use weighted graphs for richer feature extraction

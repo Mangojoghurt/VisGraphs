@@ -1,20 +1,16 @@
 export degree_distribution, adjacency_matrix, laplacian_matrix
 
 """
-    adjacency_matrix(edges, n)
+    adjacency_matrix(edges, n::Int)
 
-Build an n×n adjacency matrix from an edge list.
+Construct an n×n adjacency matrix from an edge list.
 
-Edges are treated as undirected: both A[i,j] and A[j,i] are set to 1.
-Works with both unweighted edges `(i, j)` and weighted edges `(i, j, w)`;
-the weight is ignored — use the raw values if you need a weighted matrix.
+The graph is treated as undirected: each edge `(i, j)` contributes both
+`A[i, j] = 1` and `A[j, i] = 1`. If edges are weighted tuples `(i, j, w)`,
+the weight `w` is ignored.
 
-Arguments:
-    edges: edge list returned by `hvg`, `nvg`, `whvg`, or `wnvg`.
-    n::Int: number of nodes (length of the original time series).
-
-Returns:
-    Matrix{Int}: symmetric n×n adjacency matrix.
+This function is intended for edge lists produced by `hvg`, `nvg`, `whvg`,
+or `wnvg`.
 
 # Example
 ```julia
@@ -41,29 +37,28 @@ function adjacency_matrix(edges, n::Int)
 end
 
 """
-    degree_distribution(edges, n)
+    degree_distribution(edges, n::Int)
 
-Compute the degree of every node and return the full degree sequence,
-plus a normalised frequency distribution.
+Compute the degree sequence and degree distribution of a graph.
 
-The degree of node i is the number of edges incident to it.
+Returns a vector of node degrees and a normalized dictionary mapping each
+degree `k` to its empirical probability `P(k)`.
 
-Arguments:
-    edges: edge list returned by `hvg`, `nvg`, `whvg`, or `wnvg`.
-    n::Int: number of nodes (length of the original time series).
+The degree of a node is defined as the number of incident edges.
 
-Returns:
-    degrees::Vector{Int}: degree of each node (length n).
-    distribution::Dict{Int,Float64}: maps each observed degree k
-        to the fraction of nodes with that degree P(k).
+# Returns
+- `degrees::Vector{Int}`: degree of each node.
+- `distribution::Dict{Int, Float64}`: empirical degree distribution.
 
 # Example
 ```julia
 x = generate_sine(50)
 edges = nvg(x)
+
 degrees, dist = degree_distribution(edges, length(x))
-println("Max degree: ", maximum(degrees))
-println("P(k): ", sort(collect(dist)))
+
+maximum(degrees)
+sort(collect(dist))
 ```
 """
 function degree_distribution(edges, n::Int)
@@ -90,33 +85,27 @@ function degree_distribution(edges, n::Int)
 end
 
 """
-    laplacian_matrix(edges, n)
+    laplacian_matrix(edges, n::Int)
 
-Compute the combinatorial Laplacian matrix L = D - A, where D is the
-diagonal degree matrix and A is the adjacency matrix.
+Construct the combinatorial graph Laplacian `L = D - A`.
 
-The Laplacian is symmetric and positive semi-definite. Its eigenvalues
-encode structural properties of the graph: the number of zero eigenvalues
-equals the number of connected components, and the second-smallest
-eigenvalue (the Fiedler value) measures how well-connected the graph is.
+The Laplacian encodes structural properties of the graph. It is symmetric
+and positive semidefinite. The number of zero eigenvalues corresponds to
+the number of connected components, and the second-smallest eigenvalue
+(the Fiedler value) measures graph connectivity.
 
-Arguments:
-    edges: edge list returned by `hvg`, `nvg`, `whvg`, or `wnvg`.
-    n::Int: number of nodes (length of the original time series).
-
-Returns:
-    Matrix{Int}: symmetric n×n Laplacian matrix.
+This function builds the Laplacian using the adjacency matrix derived from
+the provided edge list.
 
 # Example
 ```julia
 x = generate_sine(20)
 edges = nvg(x)
+
 L = laplacian_matrix(edges, length(x))
 
-# compute eigenvalues (requires LinearAlgebra)
 using LinearAlgebra
-λ = eigvals(Symmetric(float.(L)))
-println("Fiedler value: ", λ[2])
+eigvals(Symmetric(float.(L)))
 ```
 """
 function laplacian_matrix(edges, n::Int)

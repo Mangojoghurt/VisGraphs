@@ -75,114 +75,13 @@ Pkg.instantiate()
 ```julia
 using VisGraphs
 
-# 1. Generate a test signal (sine wave with 20 points)
-x = generate_sine(20)
-
-# 2. Compute the Horizontal Visibility Graph
-hvg_edges = hvg(x)
-
-# 3. Compute the Natural Visibility Graph
-nvg_edges = nvg(x)
-
-# 4. Inspect the edges
-println("HVG edges: ", hvg_edges)
-println("NVG edges: ", nvg_edges)
-println("HVG has $(length(hvg_edges)) edges")
-println("NVG has $(length(nvg_edges)) edges")  # NVG always ≥ HVG
+x = generate_noisy_sine(100, 0.1)
+g = hvg(x)
+plot_hvg(x)
 ```
 
-Each function returns a `Vector{Tuple{Int,Int}}` — a list of index pairs `(i, j)`
-representing connected nodes. For example, `(2, 5)` means node 2 and node 5 are
-connected by an edge.
-
----
-
-## API Reference
-
-### Signal Generators
-
-| Function | Description |
-|---|---|
-| `generate_sine(n=100)` | Sine wave over `[0, 4π]` with `n` points |
-| `generate_random(n=100)` | Uniform random values in `[0, 1]` |
-| `generate_noisy_sine(n=100, noise=0.2)` | Sine wave with added Gaussian noise |
-
-### Graph Constructors
-
-| Function | Input | Output | Description |
-|---|---|---|---|
-| `hvg(x)` | `AbstractVector` | `Vector{Tuple{Int,Int}}` | Horizontal Visibility Graph |
-| `nvg(x)` | `AbstractVector` | `Vector{Tuple{Int,Int}}` | Natural Visibility Graph |
-
----
-
-## Running the Examples
-
-Make sure you are inside the project directory with `julia --project=.`, then:
-
-```julia
-# Plot HVG NVG on the time series — saves PNG files
-include("examples/plot_hvg.jl")
-
-# Save HVG and NVG graph plots to PNG files
-include("examples/show_graphs.jl")
-```
-
-The PNG files will be saved in your current directory. Open them with any image viewer.
-
----
-
-## Running the Tests
-
-In Pkg mode (press `]`):
-
-```
-pkg> test
-```
-
-Expected output:
-
-```
-Test Summary:               | Pass  Total
-VisGraphs basic functionality |    3      3
-```
-
-The tests verify that:
-- `hvg(x)` returns a non-empty edge list
-- `nvg(x)` returns a non-empty edge list
-- NVG and HVG produce different edge sets (NVG is more permissive)
-
----
-
-## Verifying a Clean Install
-
-To check the package installs correctly in a fresh environment (as a reviewer would):
-
-**Step 1** — Open Julia (anywhere, not inside the project folder):
-```
-julia
-```
-
-**Step 2** — Enter Pkg mode and create a temporary empty environment:
-```
-pkg> activate --temp
-```
-The prompt changes to `(jl_XXXX) pkg>` — this is a blank slate with nothing installed.
-
-**Step 3** — Install the package directly from the repository:
-```
-pkg> add https://git.tu-berlin.de/juml-visgraphs-groupb/visgraphs
-```
-
-**Step 4** — Test that it works:
-```julia
-using VisGraphs
-x = generate_sine(10)
-hvg(x)
-nvg(x)
-```
-
-If all four steps complete without errors, the package installs correctly.
+For a more detailed introduction, examples, and API reference, see the
+[Getting Started guide](https://Mangojoghurt.github.io/VisGraphs/dev/).
 
 ---
 
