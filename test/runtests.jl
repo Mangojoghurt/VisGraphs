@@ -127,8 +127,8 @@ end
     plt2 = plot_nvg(x)
 
     # ensure plot objects are returned
-    @test plt1 !isnothing
-    @test plt2 !isnothing
+    @test plt1 !== nothing 
+    @test plt2 !== nothing 
 
     # ensure correct type
     @test typeof(plt1) == typeof(plt2)
