@@ -1,9 +1,8 @@
 # VisGraphs
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://Mangojoghurt.github.io/VisGraphs/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://Mangojoghurt.github.io/VisGraphs/dev/)
-[![Build Status](https://github.com/Mangojoghurt/VisGraphs/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Mangojoghurt/VisGraphs/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/Mangojoghurt/VisGraphs/branch/main/graph/badge.svg)](https://codecov.io/gh/Mangojoghurt/VisGraphs)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://Mangojoghurt.github.io/VisGraphs.jl/dev/)
+[![Build Status](https://github.com/Mangojoghurt/VisGraphs.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Mangojoghurt/VisGraphs.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Coverage](https://codecov.io/gh/Mangojoghurt/VisGraphs.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/Mangojoghurt/VisGraphs.jl)
 
 A Julia package for constructing **visibility graphs** from time series data.
 Visibility graphs convert a sequence of numbers into a network where each data point
@@ -39,20 +38,20 @@ Open Julia and run:
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/Mangojoghurt/VisGraphs")
+Pkg.add(url="https://github.com/Mangojoghurt/VisGraphs.jl")
 ```
 
 Or in Pkg mode (press `]` in the Julia REPL):
 
 ```
-pkg> add https://github.com/Mangojoghurt/VisGraphs
+pkg> add https://github.com/Mangojoghurt/VisGraphs.jl
 ```
 
 ### Option 2 — Clone and run locally
 
 ```bash
-git clone https://github.com/Mangojoghurt/VisGraphs.git
-cd VisGraphs
+git clone https://github.com/Mangojoghurt/VisGraphs.jl.git
+cd VisGraphs.jl
 ```
 
 Then start Julia in project mode:
@@ -81,7 +80,7 @@ plot_hvg(x)
 ```
 
 For a more detailed introduction, examples, and API reference, see the
-[Getting Started guide](https://Mangojoghurt.github.io/VisGraphs/dev/).
+[Getting Started guide](https://Mangojoghurt.github.io/VisGraphs.jl/dev/getting_started/).
 
 ---
 

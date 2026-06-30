@@ -1,5 +1,5 @@
 """
-    generate_sine(n::Int=100)
+    generate_sine(n::Integer=100)
 
 Generate a sine wave sampled at `n` evenly spaced points over the interval
 ``[0, 4π]``.
@@ -19,12 +19,12 @@ julia> x[1] ≈ 0.0
 true
 ```
 """
-function generate_sine(n::Int=100)
+function generate_sine(n::Integer=100)
     return sin.(range(0, 4π, length=n))
 end
 
 """
-    generate_random(n::Int=100)
+    generate_random(n::Integer=100)
 
 Generate a random time series of length `n`.
 
@@ -43,13 +43,13 @@ julia> all(0 .<= generate_random(10) .< 1)
 true
 ```
 """
-function generate_random(n::Int=100)
+function generate_random(n::Integer=100)
     return rand(n)
 end
 
 
 """
-    generate_noisy_sine(n::Int=100, noise::Float64=0.2)
+    generate_noisy_sine(n::Integer=100, noise::Real=0.2)
 
 Generate a sine wave with additive Gaussian noise.
 
@@ -70,6 +70,6 @@ julia> x == y
 true
 ```
 """
-function generate_noisy_sine(n::Int=100, noise::Float64=0.2)
+function generate_noisy_sine(n::Integer=100, noise::Real=0.2)
     return sin.(range(0, 4π, length=n)) .+ noise .* randn(n)
 end

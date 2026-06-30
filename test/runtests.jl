@@ -204,8 +204,6 @@ end
     @test typeof(plt1) == typeof(plt2)
 end
 
-# ── Issue #20: analysis tools for graph metrics ────────────────────────────
-
 @testset "adjacency_matrix — basic structure" begin
 
     x = [1.0, 2.0, 5.0]
