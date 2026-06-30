@@ -82,11 +82,15 @@ Weighted variants encode additional geometric information (e.g., distances or sl
 
 ```@example main
 edges_whvg = whvg(x)
+```
+```@example main
 edges_wnvg = wnvg(x)
 ```
 
 ```@example main
 plot_whvg(x)
+```
+```@example main
 plot_wnvg(x)
 ```
 
@@ -122,6 +126,8 @@ It is often useful to compare the structural differences between HVG and NVG rep
 
 ```@example main
 plot_hvg(x)
+```
+```@example main
 plot_nvg(x)
 ```
 
